@@ -10,3 +10,6 @@ Currently, two official plugins are available:
 
 # Run chatbot
 npm run dev
+
+# Run tests
+npm run test
