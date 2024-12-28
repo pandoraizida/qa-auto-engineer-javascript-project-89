@@ -1,7 +1,7 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { beforeEach, describe, test, expect } from 'vitest';
-import { WrappedWidget } from '../pages/wrappedWidgetPage.js';
+import WrappedWidget from '../pages/wrappedWidgetPage.js';
 import App from '../src/App.jsx';
 import steps from '../__fixtures__/empty.js';
 

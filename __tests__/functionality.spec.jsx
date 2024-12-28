@@ -1,8 +1,8 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, beforeEach, test, expect } from 'vitest';
-import { WrappedWidget } from '../pages/wrappedWidgetPage.js';
-import { WelcomePage } from '../pages/welcomePage.js';
+import WrappedWidget from '../pages/wrappedWidgetPage.js';
+import WelcomePage from '../pages/welcomePage.js';
 import App from '../src/App.jsx';
 
 describe('Check widget functionality', () => {

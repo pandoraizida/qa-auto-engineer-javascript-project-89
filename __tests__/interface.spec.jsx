@@ -1,13 +1,13 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { beforeEach, afterEach, describe, test, expect } from 'vitest';
-import { WelcomePage } from '../pages/welcomePage.js';
-import { StartPage } from '../pages/startPage.js';
-import { SwitchPage } from '../pages/switchPage.js';
-import { DelailsPage } from '../pages/detailsPage.js';
-import { SubscribePage } from '../pages/subscribePage.js';
-import { TryPage } from '../pages/tryPage.js';
-import { AdvansedPage } from '../pages/advancsedPage.js';
+import WelcomePage from '../pages/welcomePage.js';
+import StartPage from '../pages/startPage.js';
+import SwitchPage from '../pages/switchPage.js';
+import DelailsPage from '../pages/detailsPage.js';
+import SubscribePage from '../pages/subscribePage.js';
+import TryPage from '../pages/tryPage.js';
+import AdvansedPage from '../pages/advancsedPage.js';
 import App from '../src/App.jsx';
 
 test('Check chat interface on Welcome page', async () => {
