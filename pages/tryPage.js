@@ -1,3 +1,5 @@
+import {screen, fireEvent} from '@testing-library/react';
+
 export default class TryPage {
   constructor(screen) {
     this.screen = screen;
@@ -6,5 +8,15 @@ export default class TryPage {
     this.returnBackButton = this.screen.getByRole('button', { name: 'Вернуться назад' });
     this.chatTextForTry = this.screen.getByText(/У нас есть подготовительные курсы/i);
     this.chatTextForTryFull = 'У нас есть подготовительные курсы, которые длятся всего 2 недели.За это время вы знакомитесь с основами программирвоания, пробуете его на практике и плавной подойдете к старту обучения в основной программе. Все это под руководством опытного программиста. Он поможет, если будут сложности. Курс стоит всего 990 рублей';
-  }
+  };
+
+  async clickIntresting() {
+      fireEvent.click(this.intrestingButton);
+      await screen.findByText('Останусь здесь, запишусь на курс');
+  };
+
+  async clickWhatAbout() {
+    fireEvent.click(this.changeProfButton);
+    await screen.findByText('Расскажи подробнее');
+  };
 }

@@ -1,101 +1,170 @@
-import {render, screen, fireEvent} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, beforeEach, test, expect } from 'vitest';
 import WrappedWidget from '../pages/wrappedWidgetPage.js';
+import GeneralElements from '../pages/widgetGeneralElements.js';
 import WelcomePage from '../pages/welcomePage.js';
+import StartPage from '../pages/startPage.js';
+import SwitchPage from '../pages/switchPage.js';
+import DetailsPage from '../pages/detailsPage.js';
+import TryPage from '../pages/tryPage.js';
+import AdvancedPage from '../pages/advancedPage.js';
+import getLastMessageText from '../helpers/getLastMessage.js';
 import App from '../src/App.jsx';
 
 describe('Check widget functionality', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
         render(<App />);
-        fireEvent.click(screen.getByRole('button', { name: 'Открыть Чат' }));
-        await screen.findByText('Начать разговор');
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
     });
 
     test('General widget elements are presented', async () => {
-        const welcomePage = new WelcomePage(screen);
-        expect(welcomePage.modalHeaderText).toBeInTheDocument();
-        expect(welcomePage.closeWidgetButton).toBeInTheDocument();
-        expect(welcomePage.widgetAvatar).toBeInTheDocument();
+        const generalElements = new GeneralElements(screen);
+        expect(generalElements.modalHeaderText).toBeVisible();
+        expect(generalElements.closeWidgetButton).toBeVisible();
+        expect(generalElements.widgetAvatar).toBeVisible();
     })
 
     test('Close button wrapped the widget', async () => {
-        const welcomePage = new WelcomePage(screen);
-        expect(welcomePage.closeWidgetButton).toBeInTheDocument();
-        fireEvent.click(welcomePage.closeWidgetButton);
-        await screen.findByText('Открыть Чат');
+        const generalElements = new GeneralElements(screen);
+        expect(generalElements.closeWidgetButton).toBeVisible();
+        await generalElements.closeWidget();
 
         const wrappedWidget = new WrappedWidget(screen);
-        expect(wrappedWidget.WrappedButton).toBeInTheDocument();
-        expect(welcomePage.closeWidgetButton).not.toBeInTheDocument();
+        expect(wrappedWidget.WrappedButton).toBeVisible();
+        expect(generalElements.closeWidgetButton).not.toBeVisible();
     })
 
     test('Return back leads to Start page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Начать разговор' }));
-        await screen.findByText('Сменить профессию или трудоустроиться');
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText('Расскажи подробнее');
-        fireEvent.click(screen.getByRole('button', { name: 'Расскажи подробнее' }));
-        await screen.findByText('Останусь здесь, запишусь на курс');
-        fireEvent.click(screen.getByRole('button', { name: 'Останусь здесь, запишусь на курс' }));
-        await screen.findByText('Верни меня в начало');
-        fireEvent.click(screen.getByRole('button', { name: 'Верни меня в начало' }));
-        expect(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' })).toBeInTheDocument();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
+
+        const startPage = new StartPage(screen);
+        await startPage.clickIamDeveloper();
+
+        const advancedPage = new AdvancedPage(screen);
+        await advancedPage.clickReturnBack();
+        
+        expect(startPage.chatTextForStart).toBeVisible();
+    })
+
+    test('After click on button it has tag <p>', async () => {
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
+        expect(screen.getByText('Начать разговор').tagName).toBe('P');
+
+        const startPage = new StartPage(screen);
+        await startPage.clickIamDeveloper();
+        expect(screen.getByText('Я разработчик, хочу углубить свои знания').tagName).toBe('P');
     })
 })
 
-describe('Check that button leads to the appropriate page', async () => {
+describe('Check buttons from Start page', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
-        render(<App />);
-        fireEvent.click(screen.getByRole('button', { name: 'Открыть Чат' }));
-        await screen.findByText('Начать разговор');
-
-        fireEvent.click(screen.getByRole('button', { name: 'Начать разговор' }));
-        await screen.findByText(/Помогу вам выбрать подходящий курс/i);
+        render(<App/>);    
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
     });
 
-    test('Subscribe1 flow', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
+    test('<Change profession> button leads to Switch page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+        await screen.findByText(/Помогу вам выбрать подходящий курс/i);
+    })
+
+    test('<Try IT> button leads to Try page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickTryIt();
+        await screen.findByText(/У нас есть подготовительные курсы, которые длятся всего 2 недели/i);
+    })
+
+    test('<I am developer> button leads to Advanced page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickIamDeveloper();
+        await screen.findByText(/Отлично! Есть несколько вариантов обучения для тех, кто хочет углубить знания/i);
+    })
+})
+
+describe('Check buttons from Switch page', () => {
+    beforeEach(async () => {
+        window.HTMLElement.prototype.scrollIntoView = function() {};
+        render(<App/>);    
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+    });
+
+    test('<Details> button leads to Details page', async () => {
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickDetails();
+        await screen.findByText(/В Хекслете можно освоить JavaScript, Python, PHP, верстк/i);
+    })
+
+    test('<Something Easy> button leads to Try page', async () => {
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickSomeEasy();
+        await screen.findByText(/У нас есть подготовительные курсы, которые длятся всего 2 недели/i);
+    })
+})
+
+describe('Check buttons from Try page', () => {
+    beforeEach(async () => {
+        window.HTMLElement.prototype.scrollIntoView = function() {};
+        render(<App/>);    
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
+        const startPage = new StartPage(screen);
+        await startPage.clickTryIt();
+    });
+
+    test('<Intresting> button leads to Details page', async () => {
+        const tryPage = new TryPage(screen);
+        await tryPage.clickIntresting();
+        await screen.findByText(/В Хекслете можно освоить JavaScript, Python, PHP, верстк/i);
+    })
+
+    test('<Change profession> button leads to Switch page', async () => {
+        const tryPage = new TryPage(screen);
+        await tryPage.clickWhatAbout();
         await screen.findByText(/У нас есть программы обучения новой профессии/i);
+    })
+})
 
-        fireEvent.click(screen.getByRole('button', { name: 'Расскажи подробнее' }));
-        await screen.findByText(/В Хекслете можно освоить JavaScript, Python, PHP, верстку, Java, DevOps и Ruby on Rails/i);
+describe('Check buttons from Details and Advanced pages', () => {
+    beforeEach(async () => {
+        window.HTMLElement.prototype.scrollIntoView = function() {};
+        render(<App/>);    
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
+    });
 
-        fireEvent.click(screen.getByRole('button', { name: 'Останусь здесь, запишусь на курс' }));
+    test('<Subscribe> button leads to Subscribe page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickDetails();
+        const detailsPage = new DetailsPage(screen);
+        await detailsPage.clickSubscribe();
         await screen.findByText(/Ага, дублирую ссылку/i);
     })
 
-    test('Subscribe2 flow', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText(/У нас есть программы обучения новой профессии/i);
-
-        fireEvent.click(screen.getByRole('button', { name: 'А есть что-нибудь попроще' }));
-        await screen.findByText(/У нас есть подготовительные курсы, которые длятся всего 2 недели/i);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Интересно' }));
-        await screen.findByText(/В Хекслете можно освоить JavaScript, Python, PHP, верстку, Java, DevOps и Ruby on Rails/i);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Останусь здесь, запишусь на курс' }));
-        await screen.findByText(/Ага, дублирую ссылку/i);
-    })
-
-    test('Try IT flow', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Попробовать себя в IT' }));
-        await screen.findByText(/У нас есть подготовительные курсы, которые длятся всего 2 недели/i);
-    })
-
-    test('Change profession flow', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Попробовать себя в IT' }));
-        await screen.findByText(/У нас есть подготовительные курсы, которые длятся всего 2 недели/i);
-
-        fireEvent.click(screen.getByRole('button', { name: 'А что по поводу смены профессии?' }));
-        await screen.findByText(/У нас есть программы обучения новой профессии./i);
-    })
-
-    test('Advansed flow', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Я разработчик, хочу углубить свои знания' }));
-        await screen.findByText(/Отлично! Есть несколько вариантов обучения для тех/i);
+    test('<Tell more> button leads to Start page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickIamDeveloper();
+        const advancedPage = new AdvancedPage(screen);
+        await advancedPage.clickTellMeMore();
+        expect(getLastMessageText()).toHaveTextContent('Привет! Я ваш виртуальный помощник. Нажмите "Начать разговор", чтобы открыть чат');
     })
 })

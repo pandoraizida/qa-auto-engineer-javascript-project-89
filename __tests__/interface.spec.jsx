@@ -1,118 +1,109 @@
-import {render, screen, fireEvent} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { beforeEach, afterEach, describe, test, expect } from 'vitest';
+import { beforeEach, describe, test, expect } from 'vitest';
+import WrappedWidget from '../pages/wrappedWidgetPage.js';
 import WelcomePage from '../pages/welcomePage.js';
 import StartPage from '../pages/startPage.js';
 import SwitchPage from '../pages/switchPage.js';
-import DelailsPage from '../pages/detailsPage.js';
+import DetailsPage from '../pages/detailsPage.js';
 import SubscribePage from '../pages/subscribePage.js';
 import TryPage from '../pages/tryPage.js';
-import AdvansedPage from '../pages/advancsedPage.js';
+import AdvancedPage from '../pages/advancedPage.js';
 import App from '../src/App.jsx';
 
-test('Check chat interface on Welcome page', async () => {
+test('Should display correct elements on Welcome page', async () => {
     window.HTMLElement.prototype.scrollIntoView = function() {};
     render(<App/>);
-    fireEvent.click(screen.getByRole('button', { name: 'Открыть Чат' }));
-    await screen.findByText('Начать разговор');
+    const wrappedWidget = new WrappedWidget(screen);
+    await wrappedWidget.openWidget();
 
     const welcomePage = new WelcomePage(screen);
-    expect(welcomePage.chatText).toBeInTheDocument();
-    expect(welcomePage.startConvButton).toBeInTheDocument();
+    expect(welcomePage.chatText).toBeVisible();
+    expect(welcomePage.startConvButton).toBeVisible();
 })
 
 describe('Check chat interface', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
-        render(<App/>);
-    
-        //open Start page
-        fireEvent.click(screen.getByRole('button', { name: 'Открыть Чат' }));
-        await screen.findByText('Начать разговор');
-    
-        fireEvent.click(screen.getByRole('button', { name: 'Начать разговор' }));
-        await screen.findByText('Сменить профессию или трудоустроиться');
+        render(<App/>);    
+        const wrappedWidget = new WrappedWidget(screen);
+        await wrappedWidget.openWidget();
+        const welcomePage = new WelcomePage(screen);
+        await welcomePage.startConversation();
     })
     
-    afterEach(async () => {
-        //close widget
-        fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-        await screen.findByText('Открыть Чат');
-    })
-
-    test('on Start page', () => {
+    test('should display correct elements on Start page', () => {
         const startPage = new StartPage(screen);
-          expect(startPage.chatTextForStart).toBeInTheDocument();
-          expect(startPage.changeProfButton).toBeInTheDocument();
-          expect(startPage.tryItButton).toBeInTheDocument();
-          expect(startPage.advancedButton).toBeInTheDocument();
-          expect(screen.getByText('Начать разговор').tagName).toBe('P');
+          expect(startPage.chatTextForStart).toBeVisible();
+          expect(startPage.changeProfButton).toBeVisible();
+          expect(startPage.tryItButton).toBeVisible();
+          expect(startPage.advancedButton).toBeVisible();
           expect(startPage.chatTextForStart).toHaveTextContent(startPage.chatTextForStartFull);
     })
 
-    test('on Switch page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText('Расскажи подробнее');
+    test('should display correct elements on Switch page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+
         const switchPage = new SwitchPage(screen);
-            expect(switchPage.detailsButton).toBeInTheDocument();
-            expect(switchPage.easierButton).toBeInTheDocument();
-            expect(switchPage.returnBackButton).toBeInTheDocument();
-            expect(screen.getByText('Сменить профессию или трудоустроиться').tagName).toBe('P')
+            expect(switchPage.detailsButton).toBeVisible();
+            expect(switchPage.easierButton).toBeVisible();
+            expect(switchPage.returnBackButton).toBeVisible();
             expect(switchPage.chatTextForSwitch).toHaveTextContent(switchPage.chatTextForSwitchFull);
     })
 
-    test('on Details page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText('Расскажи подробнее');
-        fireEvent.click(screen.getByRole('button', { name: 'Расскажи подробнее' }));
-        await screen.findByText('Останусь здесь, запишусь на курс');
-        const delailsPage = new DelailsPage(screen);
-            expect(delailsPage.subscribeButton).toBeInTheDocument();
-            expect(delailsPage.returnBackButton).toBeInTheDocument();
-            expect(screen.getByText('Расскажи подробнее').tagName).toBe('P')
-            expect(delailsPage.chatTextForDetails1).toHaveTextContent(delailsPage.chatTextForDetailsFull1);
-            expect(delailsPage.chatTextForDetails2).toHaveTextContent(delailsPage.chatTextForDetailsFull2);
+    test('should display correct elements on Details page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickDetails();
+
+        const detailsPage = new DetailsPage(screen);
+            expect(detailsPage.subscribeButton).toBeVisible();
+            expect(detailsPage.returnBackButton).toBeVisible();
+            expect(detailsPage.chatTextForDetails1).toHaveTextContent(detailsPage.chatTextForDetailsFull1);
+            expect(detailsPage.chatTextForDetails2).toHaveTextContent(detailsPage.chatTextForDetailsFull2);
     })
 
-    test('on Subscribe page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText('Расскажи подробнее');
-        fireEvent.click(screen.getByRole('button', { name: 'Расскажи подробнее' }));
-        await screen.findByText('Останусь здесь, запишусь на курс');
-        fireEvent.click(screen.getByRole('button', { name: 'Останусь здесь, запишусь на курс' }));
-        await screen.findByText('Верни меня в начало');
+    test('should display correct elements on Subscribe page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickDetails();
+
+        const detailsPage = new DetailsPage(screen);
+        await detailsPage.clickSubscribe();
 
         const subscribePage = new SubscribePage(screen);
-            expect(subscribePage.doubleButton).toBeInTheDocument();
-            expect(subscribePage.returnBackButton).toBeInTheDocument();
-            expect((screen.getAllByText(/Останусь здесь, запишусь на курс/i)[0]).tagName).toBe('P');
-            expect(subscribePage.chatTextForSubscribe1).toBeInTheDocument();
-            expect(subscribePage.chatTextForSubscribe2).toBeInTheDocument();
+            expect(subscribePage.doubleButton).toBeVisible();
+            expect(subscribePage.returnBackButton).toBeVisible();
+            expect(subscribePage.chatTextForSubscribe1).toBeVisible();
+            expect(subscribePage.chatTextForSubscribe2).toBeVisible();
     })
 
-    test('on Try page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Сменить профессию или трудоустроиться' }));
-        await screen.findByText('А есть что-нибудь попроще');
-        fireEvent.click(screen.getByRole('button', { name: 'А есть что-нибудь попроще' }));
-        await screen.findByText('Интересно');
+    test('should display correct elements on Try page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickChangeProfession();
+        const switchPage = new SwitchPage(screen);
+        await switchPage.clickSomeEasy();
 
         const tryPage = new TryPage(screen);
-            expect(tryPage.intrestingButton).toBeInTheDocument();
-            expect(tryPage.changeProfButton).toBeInTheDocument();
-            expect(tryPage.returnBackButton).toBeInTheDocument();
-            expect(screen.getByText('А есть что-нибудь попроще').tagName).toBe('P')
+            expect(tryPage.intrestingButton).toBeVisible();
+            expect(tryPage.changeProfButton).toBeVisible();
+            expect(tryPage.returnBackButton).toBeVisible();
             expect(tryPage.chatTextForTry).toHaveTextContent(tryPage.chatTextForTryFull);
     })
 
-    test('on Advansed page', async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Я разработчик, хочу углубить свои знания' }));
-        await screen.findByText('Расскажи подробнее');
+    test('should display correct elements on Advanced page', async () => {
+        const startPage = new StartPage(screen);
+        await startPage.clickIamDeveloper();
 
-        const advansedPage = new AdvansedPage(screen);
-            expect(advansedPage.startButton).toBeInTheDocument();
-            expect(advansedPage.returnBackButton).toBeInTheDocument();
-            expect(screen.getByText('Я разработчик, хочу углубить свои знания').tagName).toBe('P');
-            expect(advansedPage.chatTextForAdv1).toHaveTextContent(advansedPage.chatTextForAdvFull1);
-            expect(advansedPage.chatTextForAdv2).toHaveTextContent(advansedPage.chatTextForAdvFull2);
+        const advancedPage = new AdvancedPage(screen);
+            expect(advancedPage.startButton).toBeVisible();
+            expect(advancedPage.returnBackButton).toBeVisible();
+            expect(advancedPage.chatTextForAdv1).toHaveTextContent(advancedPage.chatTextForAdvFull1);
+            expect(advancedPage.chatTextForAdv2).toHaveTextContent(advancedPage.chatTextForAdvFull2);
     })
 })
