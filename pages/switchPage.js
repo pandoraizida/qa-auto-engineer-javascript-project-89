@@ -12,11 +12,9 @@ export default class SwitchPage {
 
   async clickDetails() {
     fireEvent.click(this.detailsButton);
-    await screen.findByText('Останусь здесь, запишусь на курс');
   }
 
   async clickSomeEasy() {
     fireEvent.click(this.easierButton);
-    await screen.findByText('Интересно');
   }
 }

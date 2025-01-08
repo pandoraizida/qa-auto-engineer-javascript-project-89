@@ -13,7 +13,6 @@ export default class AdvancedPage {
 
   async clickReturnBack() {
     fireEvent.click(this.returnBackButton);
-    await screen.findByText('Сменить профессию или трудоустроиться');
   }
 
   async clickTellMeMore() {

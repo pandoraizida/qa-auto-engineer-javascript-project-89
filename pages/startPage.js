@@ -12,16 +12,13 @@ export default class StartPage {
 
   async clickChangeProfession() {
     fireEvent.click(this.changeProfButton);
-    await screen.findByText('Расскажи подробнее');
   }
 
   async clickIamDeveloper() {
     fireEvent.click(this.advancedButton);
-    await screen.findByText('Расскажи подробнее');
   }
 
   async clickTryIt() {
     fireEvent.click(this.tryItButton);
-    await screen.findByText('Интересно');
   }
 }

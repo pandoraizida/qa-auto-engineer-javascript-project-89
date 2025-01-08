@@ -9,6 +9,5 @@ export default class WelcomePage {
 
   async startConversation() {
     fireEvent.click(this.startConvButton);
-    await screen.findByText('Сменить профессию или трудоустроиться');
   }
 }

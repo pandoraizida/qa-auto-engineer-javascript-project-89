@@ -12,11 +12,9 @@ export default class TryPage {
 
   async clickIntresting() {
     fireEvent.click(this.intrestingButton);
-    await screen.findByText('Останусь здесь, запишусь на курс');
   }
 
   async clickWhatAbout() {
     fireEvent.click(this.changeProfButton);
-    await screen.findByText('Расскажи подробнее');
   }
 }

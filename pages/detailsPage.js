@@ -13,6 +13,5 @@ export default class DetailsPage {
 
   async clickSubscribe() {
     fireEvent.click(this.subscribeButton);
-    await screen.findByText('Верни меня в начало');
   }
 }

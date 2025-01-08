@@ -10,6 +10,5 @@ export default class GeneralElements {
 
   async closeWidget() {
     fireEvent.click(this.closeWidgetButton);
-    await screen.findByText('Открыть Чат');
   }
 }

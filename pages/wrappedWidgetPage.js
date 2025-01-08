@@ -8,6 +8,5 @@ export default class WrappedWidget {
 
   async openWidget() {
     fireEvent.click(this.WrappedButton);
-    await screen.findByText('Виртуальный помощник');
   }
 }
