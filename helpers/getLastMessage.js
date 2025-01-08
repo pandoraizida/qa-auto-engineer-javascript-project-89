@@ -1,6 +1,7 @@
+/* eslint-env browser */
 const getLastMessageText = () => {
   const allMessages = document.querySelectorAll('.message-body');
-  const lastMessage = allMessages[allMessages.length-1];
+  const lastMessage = allMessages[allMessages.length - 1];
   return lastMessage;
 };
 

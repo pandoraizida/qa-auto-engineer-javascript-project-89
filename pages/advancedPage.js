@@ -1,4 +1,4 @@
-import {screen, fireEvent} from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 
 export default class AdvancedPage {
   constructor(screen) {
@@ -9,14 +9,14 @@ export default class AdvancedPage {
     this.chatTextForAdv2 = this.screen.getByText(/возможно индивидуальное обучение/i);
     this.chatTextForAdvFull1 = 'Отлично! Есть несколько вариантов обучения для тех, кто хочет углубить знания. Во-первых, курсы повышения квалификации. Часто их оплачивает работодатель. Если вам кажется, что такой вариант возможен, поделитесь с ним этой ссылкой: https://b2b.hexlet.io/.';
     this.chatTextForAdvFull2 = 'Во-вторых, возможно индивидуальное обучение. Вы с наставником-разработчиком составляете план и углубляетесь в темы, которые хотите изучить подробнее.';
-  };
+  }
 
   async clickReturnBack() {
     fireEvent.click(this.returnBackButton);
     await screen.findByText('Сменить профессию или трудоустроиться');
-  };
+  }
 
   async clickTellMeMore() {
     fireEvent.click(this.startButton);
-  };
+  }
 }
