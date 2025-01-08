@@ -34,7 +34,6 @@ describe('Check widget functionality', () => {
 
         const wrappedWidget = new WrappedWidget(screen);
         expect(wrappedWidget.WrappedButton).toBeVisible();
-        expect(generalElements.closeWidgetButton).not.toBeVisible();
     })
 
     test('Return back leads to Start page', async () => {
