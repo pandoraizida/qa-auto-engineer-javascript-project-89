@@ -49,9 +49,11 @@ export default class FormElements {
 
   async expectTableTitlesVisibility(expectedArray, condition = true) {
     expectedArray.forEach(async (elem) => {
-      condition
-        ? expect(await this.currentTable()).toHaveTextContent(elem)
-        : expect(await this.currentTable()).not.toHaveTextContent(elem);
+      if (condition) {
+        expect(await this.currentTable()).toHaveTextContent(elem);
+      } else {
+        expect(await this.currentTable()).not.toHaveTextContent(elem);
+      }
     });
   }
 
