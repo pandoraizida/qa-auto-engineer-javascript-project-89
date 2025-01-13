@@ -4,13 +4,18 @@ import { expect } from 'vitest';
 export default class FormElements {
   constructor(screen) {
     this.screen = screen;
-    this.emailField = this.screen.getByLabelText('Email');
-    this.passwordField = this.screen.getByLabelText('Пароль');
-    this.adressField = this.screen.getByLabelText('Адрес');
-    this.cityField = this.screen.getByLabelText('Город');
-    this.countryDropdown = this.screen.getByLabelText('Страна');
-    this.countrySelectedValue = this.screen.getByDisplayValue('Выберите');
-    this.acceptCheckbox = this.screen.getByRole('checkbox', { name: 'Принять правила' });
+  }
+
+  async currentField(label) {
+    return this.screen.getByLabelText(label);
+  }
+
+  async countrySelectedValue() {
+    return this.screen.getByDisplayValue('Выберите');
+  }
+
+  async acceptCheckbox() {
+    return this.screen.getByRole('checkbox', { name: 'Принять правила' });
   }
 
   async currentButton(name) {
@@ -29,8 +34,9 @@ export default class FormElements {
     return this.screen.getByRole('table');
   }
 
-  async typeValue(input, text) {
-    fireEvent.change(input, { target: { value: text } });
+  async typeValue(field, textForChange) {
+    const input = this.screen.getByLabelText(field);
+    fireEvent.change(input, { target: { value: textForChange } });
   }
 
   async clickButton(button) {
@@ -38,12 +44,12 @@ export default class FormElements {
   }
 
   async clickCheckbox() {
-    fireEvent.click(await this.acceptCheckbox);
+    fireEvent.click(this.screen.getByRole('checkbox', { name: 'Принять правила' }));
   }
 
   async expectTableTitlesVisibility(expectedArray, condition = true) {
     expectedArray.forEach(async (elem) => {
-      condition === true 
+      condition
         ? expect(await this.currentTable()).toHaveTextContent(elem)
         : expect(await this.currentTable()).not.toHaveTextContent(elem);
     });

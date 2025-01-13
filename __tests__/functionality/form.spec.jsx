@@ -22,14 +22,14 @@ describe('Check form functionality', () => {
 
     test('After registration user data is displayed if all form fields were filled', async () => {
         const formElements = new FormElements(screen);
-        await formElements.typeValue(formElements.emailField, userData.email);
+        await formElements.typeValue('Email', userData.email);
         expect(screen.getByDisplayValue(userData.email)).toBeVisible();
 
-        await formElements.typeValue(formElements.passwordField, userData.password);
-        await formElements.typeValue(formElements.adressField, userData.adress);
-        await formElements.typeValue(formElements.cityField, userData.city);
+        await formElements.typeValue('Пароль', userData.password);
+        await formElements.typeValue('Адрес', userData.adress);
+        await formElements.typeValue('Город', userData.city);
         await formElements.clickCheckbox();
-        await formElements.typeValue(formElements.countryDropdown, userData.county)
+        await formElements.typeValue('Страна', userData.county);
         await formElements.clickButton('Зарегистрироваться');
         
         expect(await formElements.currentButton('Назад')).toBeVisible();
