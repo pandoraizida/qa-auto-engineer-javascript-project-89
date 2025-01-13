@@ -1,18 +1,16 @@
 import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { beforeEach, describe, test, expect } from 'vitest';
-import WrappedWidget from '../../pages/wrappedWidgetPage.js';
-import GeneralElements from '../../pages/widgetGeneralElements.js';
+import WidgetElements from '../../pages/widgetPage.js';
 import App from '../../src/App.jsx';
 import steps from '../../__fixtures__/testConfiguration.js';
 import steps2 from '../../__fixtures__/empty.js';
-import getLastMessageText from '../../helpers/getLastMessage.js';
 
 test('Widget with new configuration renders successfully', () => {
     render(<App appSteps={steps} />);
-    const wrappedWidget = new WrappedWidget(screen);
-    expect(wrappedWidget.WrappedButton).toBeVisible();
-    expect(wrappedWidget.WrappedButton).toHaveTextContent('Открыть Чат');
+    const widgetElements = new WidgetElements(screen);
+    expect(widgetElements.wrappedWidgetButton).toBeVisible();
+    expect(widgetElements.wrappedWidgetButton).toHaveTextContent('Открыть Чат');
 })
 
 describe('Widget is not failed with empty configuration', () => {
@@ -22,18 +20,17 @@ describe('Widget is not failed with empty configuration', () => {
     })
 
     test('Widget with empty configuration renders successfully', () => {
-        const wrappedWidget = new WrappedWidget(screen);
-        expect(wrappedWidget.WrappedButton).toBeVisible();
-        expect(wrappedWidget.WrappedButton).toHaveTextContent('Открыть Чат');
+        const widgetElements = new WidgetElements(screen);
+        expect(widgetElements.wrappedWidgetButton).toBeVisible();
     })
 
     test('General elements are not affected by empty configuration', async () => {
-        const wrappedWidget = new WrappedWidget(screen);
-        await wrappedWidget.openWidget();
-        const generalElements = new GeneralElements(screen);
-        expect(generalElements.closeWidgetButton).toBeVisible();
-        expect(generalElements.modalHeaderText).toBeVisible();
-        expect(generalElements.widgetAvatar).toBeVisible();
-        expect(getLastMessageText()).toHaveTextContent('');
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(('Открыть Чат'));
+        
+        expect(await widgetElements.closeWidgetButton()).toBeVisible();
+        expect(await widgetElements.modalHeaderText()).toBeVisible();
+        expect(await widgetElements.widgetAvatar()).toBeVisible();
+        widgetElements.expectLastMessageVisability('');
     })
 })

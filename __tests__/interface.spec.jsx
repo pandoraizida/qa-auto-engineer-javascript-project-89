@@ -1,109 +1,102 @@
 import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { beforeEach, describe, test, expect } from 'vitest';
-import WrappedWidget from '../pages/wrappedWidgetPage.js';
-import WelcomePage from '../pages/welcomePage.js';
-import StartPage from '../pages/startPage.js';
-import SwitchPage from '../pages/switchPage.js';
-import DetailsPage from '../pages/detailsPage.js';
-import SubscribePage from '../pages/subscribePage.js';
-import TryPage from '../pages/tryPage.js';
-import AdvancedPage from '../pages/advancedPage.js';
+import { beforeEach, describe, test, expect} from 'vitest';
+import FormElements from '../pages/formPage.js';
+import WidgetElements from '../pages/widgetPage.js'
 import App from '../src/App.jsx';
+import steps from '../__fixtures__/steps.js';
 
-test('Should display correct elements on Welcome page', async () => {
-    window.HTMLElement.prototype.scrollIntoView = function() {};
+test('Should display correct Form elements', async () => {
     render(<App/>);
-    const wrappedWidget = new WrappedWidget(screen);
-    await wrappedWidget.openWidget();
-
-    const welcomePage = new WelcomePage(screen);
-    expect(welcomePage.chatText).toBeVisible();
-    expect(welcomePage.startConvButton).toBeVisible();
+    const formElements = new FormElements(screen);
+    expect(formElements.emailField).toBeVisible();
+    expect(formElements.passwordField).toBeVisible();
+    expect(formElements.adressField).toBeVisible();
+    expect(formElements.cityField).toBeVisible();
+    expect(formElements.countryDropdown).toBeVisible();
+    expect(formElements.countrySelectedValue).toBeVisible();
+    expect(await formElements.findAllElements('option')).toHaveLength(4);
+    expect(formElements.acceptCheckbox).toBeVisible();
+    expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
+    expect(await formElements.findAllElements('button')).toHaveLength(2);
+    expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
 })
 
-describe('Check chat interface', () => {
+test('Should display correct Widget elements on Welcome page', async () => {
+    window.HTMLElement.prototype.scrollIntoView = function() {};
+    render(<App/>);
+    const widgetElements = new WidgetElements(screen);
+    await widgetElements.clickWidgetButton(('Открыть Чат'));
+    widgetElements.expectLastMessageVisability(steps[0].messages[0]);
+})
+
+describe('Check Widget interface', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
         render(<App/>);    
-        const wrappedWidget = new WrappedWidget(screen);
-        await wrappedWidget.openWidget();
-        const welcomePage = new WelcomePage(screen);
-        await welcomePage.startConversation();
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(('Открыть Чат'));
+        await widgetElements.clickWidgetButton(steps[0].buttons[0].text); //Начать разговор
+        widgetElements.expectLastMessageVisability(steps[0].messages[0]);
     })
     
     test('should display correct elements on Start page', () => {
-        const startPage = new StartPage(screen);
-          expect(startPage.chatTextForStart).toBeVisible();
-          expect(startPage.changeProfButton).toBeVisible();
-          expect(startPage.tryItButton).toBeVisible();
-          expect(startPage.advancedButton).toBeVisible();
-          expect(startPage.chatTextForStart).toHaveTextContent(startPage.chatTextForStartFull);
-    })
-
-    test('should display correct elements on Switch page', async () => {
-        const startPage = new StartPage(screen);
-        await startPage.clickChangeProfession();
-
-        const switchPage = new SwitchPage(screen);
-            expect(switchPage.detailsButton).toBeVisible();
-            expect(switchPage.easierButton).toBeVisible();
-            expect(switchPage.returnBackButton).toBeVisible();
-            expect(switchPage.chatTextForSwitch).toHaveTextContent(switchPage.chatTextForSwitchFull);
-    })
-
-    test('should display correct elements on Details page', async () => {
-        const startPage = new StartPage(screen);
-        await startPage.clickChangeProfession();
-
-        const switchPage = new SwitchPage(screen);
-        await switchPage.clickDetails();
-
-        const detailsPage = new DetailsPage(screen);
-            expect(detailsPage.subscribeButton).toBeVisible();
-            expect(detailsPage.returnBackButton).toBeVisible();
-            expect(detailsPage.chatTextForDetails1).toHaveTextContent(detailsPage.chatTextForDetailsFull1);
-            expect(detailsPage.chatTextForDetails2).toHaveTextContent(detailsPage.chatTextForDetailsFull2);
-    })
-
-    test('should display correct elements on Subscribe page', async () => {
-        const startPage = new StartPage(screen);
-        await startPage.clickChangeProfession();
-
-        const switchPage = new SwitchPage(screen);
-        await switchPage.clickDetails();
-
-        const detailsPage = new DetailsPage(screen);
-        await detailsPage.clickSubscribe();
-
-        const subscribePage = new SubscribePage(screen);
-            expect(subscribePage.doubleButton).toBeVisible();
-            expect(subscribePage.returnBackButton).toBeVisible();
-            expect(subscribePage.chatTextForSubscribe1).toBeVisible();
-            expect(subscribePage.chatTextForSubscribe2).toBeVisible();
+        const widgetElements = new WidgetElements(screen);
+        widgetElements.expectLastMessageVisability(steps[1].messages[0]);
+        widgetElements.expectCurrenButtonVisability(steps[1].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[1].buttons[1].text);
+        widgetElements.expectCurrenButtonVisability(steps[1].buttons[2].text);
     })
 
     test('should display correct elements on Try page', async () => {
-        const startPage = new StartPage(screen);
-        await startPage.clickChangeProfession();
-        const switchPage = new SwitchPage(screen);
-        await switchPage.clickSomeEasy();
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(steps[1].buttons[1].text); //Попробовать себя в IT
 
-        const tryPage = new TryPage(screen);
-            expect(tryPage.intrestingButton).toBeVisible();
-            expect(tryPage.changeProfButton).toBeVisible();
-            expect(tryPage.returnBackButton).toBeVisible();
-            expect(tryPage.chatTextForTry).toHaveTextContent(tryPage.chatTextForTryFull);
+        widgetElements.expectLastMessageVisability(steps[2].messages[0]);
+        widgetElements.expectCurrenButtonVisability(steps[2].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[2].buttons[1].text);
+        widgetElements.expectCurrenButtonVisability(steps[2].buttons[2].text);
+    })
+
+    test('should display correct elements on Switch page', async () => {
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
+
+        widgetElements.expectLastMessageVisability(steps[3].messages[0]);
+        widgetElements.expectCurrenButtonVisability(steps[3].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[3].buttons[1].text);
+        widgetElements.expectCurrenButtonVisability(steps[3].buttons[2].text);    
+    })
+
+    test('should display correct elements on Details page', async () => {
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
+        await widgetElements.clickWidgetButton(steps[3].buttons[0].text) //Расскажи подробнее
+
+        widgetElements.expectLastMessageVisability(steps[4].messages[0]);
+        widgetElements.expectCurrenButtonVisability(steps[4].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[4].buttons[1].text);
     })
 
     test('should display correct elements on Advanced page', async () => {
-        const startPage = new StartPage(screen);
-        await startPage.clickIamDeveloper();
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(steps[1].buttons[2].text); //Я разработчик, хочу углубить свои знания
 
-        const advancedPage = new AdvancedPage(screen);
-            expect(advancedPage.startButton).toBeVisible();
-            expect(advancedPage.returnBackButton).toBeVisible();
-            expect(advancedPage.chatTextForAdv1).toHaveTextContent(advancedPage.chatTextForAdvFull1);
-            expect(advancedPage.chatTextForAdv2).toHaveTextContent(advancedPage.chatTextForAdvFull2);
+        widgetElements.expectLastMessageVisability(steps[5].messages[0]);
+        widgetElements.expectLastMessageVisability(steps[5].messages[1]);
+        widgetElements.expectCurrenButtonVisability(steps[5].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[5].buttons[1].text);
+    })
+
+    test('should display correct elements on Subscribe page', async () => {
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
+        await widgetElements.clickWidgetButton(steps[3].buttons[0].text) //Расскажи подробнее
+        await widgetElements.clickWidgetButton(steps[4].buttons[0].text) //Останусь здесь, запишусь на курс
+        
+        widgetElements.expectLastMessageVisability(steps[6].messages[0]);
+        widgetElements.expectLastMessageVisability(steps[6].messages[1]);
+        widgetElements.expectCurrenButtonVisability(steps[6].buttons[0].text);
+        widgetElements.expectCurrenButtonVisability(steps[6].buttons[1].text);
     })
 })
