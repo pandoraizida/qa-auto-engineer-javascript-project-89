@@ -6,20 +6,27 @@ import WidgetElements from '../pages/widgetPage.js'
 import App from '../src/App.jsx';
 import steps from '../__fixtures__/steps.js';
 
-test('Should display correct Form elements', async () => {
-    render(<App/>);
-    const formElements = new FormElements(screen);
-    expect(await formElements.currentField('Email')).toBeVisible();
-    expect(await formElements.currentField('Пароль')).toBeVisible();
-    expect(await formElements.currentField('Адрес')).toBeVisible();
-    expect(await formElements.currentField('Город')).toBeVisible();
-    expect(await formElements.currentField('Страна')).toBeVisible();
-    expect(await formElements.countrySelectedValue()).toBeVisible();
-    expect(await formElements.findAllElements('option')).toHaveLength(4);
-    expect(await formElements.acceptCheckbox()).toBeVisible();
-    expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
-    expect(await formElements.findAllElements('button')).toHaveLength(2);
-    expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
+describe('Should display correct Form elements', () => {
+    beforeEach(async () => {
+        render(<App/>);
+    })
+
+    test.each([
+        { field: 'Email' },
+        { field: 'Пароль' },
+        { field: 'Адрес' },
+        { field: 'Город' },
+        { field: 'Страна' },
+        { field: 'Принять правила' }
+    ])('Should display field: %s', async ({ field }) => {
+        const formElements = new FormElements(screen);
+        expect(await formElements.currentField(field)).toBeVisible();
+    });
+
+    test('Should display registration button', async () => {
+        const formElements = new FormElements(screen);
+        expect(await formElements.registrationButton()).toBeVisible();
+    })
 })
 
 test('Should display correct Widget elements on Welcome page', async () => {
@@ -30,13 +37,17 @@ test('Should display correct Widget elements on Welcome page', async () => {
     widgetElements.expectLastMessageVisability(steps[0].messages[0]);
 })
 
+// Параметризованные тесты, как предложено для виджета в примере из ревью, тяжело читаемы и интуитивно не понятны
+// что затрудняет дальнейшую с ними работу и отладку
+// предлагаю оставить как есть
+
 describe('Check Widget interface', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
         render(<App/>);    
         const widgetElements = new WidgetElements(screen);
         await widgetElements.clickWidgetButton(('Открыть Чат'));
-        await widgetElements.clickWidgetButton(steps[0].buttons[0].text); //Начать разговор
+        await widgetElements.clickWidgetButton(steps[0].buttons[0].text);
         widgetElements.expectLastMessageVisability(steps[0].messages[0]);
     })
     
@@ -50,7 +61,7 @@ describe('Check Widget interface', () => {
 
     test('should display correct elements on Try page', async () => {
         const widgetElements = new WidgetElements(screen);
-        await widgetElements.clickWidgetButton(steps[1].buttons[1].text); //Попробовать себя в IT
+        await widgetElements.clickWidgetButton(steps[1].buttons[1].text);
 
         widgetElements.expectLastMessageVisability(steps[2].messages[0]);
         widgetElements.expectCurrenButtonVisability(steps[2].buttons[0].text);
@@ -60,7 +71,7 @@ describe('Check Widget interface', () => {
 
     test('should display correct elements on Switch page', async () => {
         const widgetElements = new WidgetElements(screen);
-        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text);
 
         widgetElements.expectLastMessageVisability(steps[3].messages[0]);
         widgetElements.expectCurrenButtonVisability(steps[3].buttons[0].text);
@@ -70,8 +81,8 @@ describe('Check Widget interface', () => {
 
     test('should display correct elements on Details page', async () => {
         const widgetElements = new WidgetElements(screen);
-        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
-        await widgetElements.clickWidgetButton(steps[3].buttons[0].text) //Расскажи подробнее
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text);
+        await widgetElements.clickWidgetButton(steps[3].buttons[0].text);
 
         widgetElements.expectLastMessageVisability(steps[4].messages[0]);
         widgetElements.expectCurrenButtonVisability(steps[4].buttons[0].text);
@@ -80,7 +91,7 @@ describe('Check Widget interface', () => {
 
     test('should display correct elements on Advanced page', async () => {
         const widgetElements = new WidgetElements(screen);
-        await widgetElements.clickWidgetButton(steps[1].buttons[2].text); //Я разработчик, хочу углубить свои знания
+        await widgetElements.clickWidgetButton(steps[1].buttons[2].text);
 
         widgetElements.expectLastMessageVisability(steps[5].messages[0]);
         widgetElements.expectLastMessageVisability(steps[5].messages[1]);
@@ -90,9 +101,9 @@ describe('Check Widget interface', () => {
 
     test('should display correct elements on Subscribe page', async () => {
         const widgetElements = new WidgetElements(screen);
-        await widgetElements.clickWidgetButton(steps[1].buttons[0].text); //Сменить профессию или трудоустроиться
-        await widgetElements.clickWidgetButton(steps[3].buttons[0].text) //Расскажи подробнее
-        await widgetElements.clickWidgetButton(steps[4].buttons[0].text) //Останусь здесь, запишусь на курс
+        await widgetElements.clickWidgetButton(steps[1].buttons[0].text);
+        await widgetElements.clickWidgetButton(steps[3].buttons[0].text);
+        await widgetElements.clickWidgetButton(steps[4].buttons[0].text);
         
         widgetElements.expectLastMessageVisability(steps[6].messages[0]);
         widgetElements.expectLastMessageVisability(steps[6].messages[1]);

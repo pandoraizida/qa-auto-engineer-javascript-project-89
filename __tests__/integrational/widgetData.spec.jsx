@@ -1,7 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { beforeEach, describe, test } from 'vitest';
-import FormElements from '../../pages/formPage.js';
 import WidgetElements from '../../pages/widgetPage.js';
 import App from '../../src/App.jsx';
 import steps from '../../__fixtures__/testConfiguration.js';
@@ -10,8 +9,8 @@ describe('Widget content is from configuration', async () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollIntoView = function() {};
         render(<App appSteps={steps} />);
-        const formElements = new FormElements(screen);
-        await formElements.clickButton('Открыть Чат');
+        const widgetElements = new WidgetElements(screen);
+        await widgetElements.clickWidgetButton('Открыть Чат');
     })
 
     test('Message text is from configuration', () => {

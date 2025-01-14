@@ -30,9 +30,9 @@ describe('Check form functionality', () => {
         await formElements.typeValue('Город', userData.city);
         await formElements.clickCheckbox();
         await formElements.typeValue('Страна', userData.county);
-        await formElements.clickButton('Зарегистрироваться');
+        await formElements.clickRegistrationButton();
         
-        expect(await formElements.currentButton('Назад')).toBeVisible();
+        expect(await formElements.backButton()).toBeVisible();
         expect(await formElements.findAllElements('button')).toHaveLength(2);
         expect(await formElements.currentTable()).toBeVisible();
         expect(await formElements.findAllElements('row')).toHaveLength(6);
@@ -43,9 +43,9 @@ describe('Check form functionality', () => {
 
     test('After registration user data is not displayed if form fields were not filled', async () => {
         const formElements = new FormElements(screen);
-        await formElements.clickButton(('Зарегистрироваться'));
+        await formElements.clickRegistrationButton();
 
-        expect(await formElements.currentButton('Назад')).toBeVisible();
+        expect(await formElements.backButton()).toBeVisible();
         expect(await formElements.findAllElements('button')).toHaveLength(2);
         expect(await formElements.currentTable()).toBeVisible();
         formElements.expectTableTitlesVisibility(tableTitles);
@@ -55,10 +55,10 @@ describe('Check form functionality', () => {
 
     test('Back button leads to form', async () => {
         const formElements = new FormElements(screen);
-        expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
-        await formElements.clickButton(('Зарегистрироваться'));
-        expect(await formElements.currentButton('Назад')).toBeVisible();
-        await formElements.clickButton(('Назад'));
-        expect(await formElements.currentButton('Зарегистрироваться')).toBeVisible();
+        expect(await formElements.registrationButton()).toBeVisible();
+        await formElements.clickRegistrationButton();
+        expect(await formElements.backButton()).toBeVisible();
+        await formElements.clickBackButton();
+        expect(await formElements.registrationButton()).toBeVisible();
     })
 })

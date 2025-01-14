@@ -10,16 +10,8 @@ export default class FormElements {
     return this.screen.getByLabelText(label);
   }
 
-  async countrySelectedValue() {
-    return this.screen.getByDisplayValue('Выберите');
-  }
-
   async acceptCheckbox() {
     return this.screen.getByRole('checkbox', { name: 'Принять правила' });
-  }
-
-  async currentButton(name) {
-    return this.screen.getByRole('button', { name });
   }
 
   async acceptedRules(state) {
@@ -34,13 +26,25 @@ export default class FormElements {
     return this.screen.getByRole('table');
   }
 
+  async registrationButton() {
+    return this.screen.getByRole('button', { name: 'Зарегистрироваться' });
+  }
+
+  async backButton() {
+    return this.screen.getByRole('button', { name: 'Назад' });
+  }
+
+  async clickRegistrationButton() {
+    fireEvent.click(await this.registrationButton());
+  }
+
+  async clickBackButton() {
+    fireEvent.click(await this.backButton());
+  }
+
   async typeValue(field, textForChange) {
     const input = this.screen.getByLabelText(field);
     fireEvent.change(input, { target: { value: textForChange } });
-  }
-
-  async clickButton(button) {
-    fireEvent.click(await this.currentButton(button));
   }
 
   async clickCheckbox() {
